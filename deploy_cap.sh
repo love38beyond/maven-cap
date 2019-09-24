@@ -9,13 +9,16 @@
 #     Last modified on 2019/09/12
 
 # 容器名称
-CONTAINER="jenkins_cap"
+CONTAINER="cap"
 # 镜像名称（以日期时间为镜像标签，防止重复）
 IMAGE=$CONTAINER":"$(date -d "today" +"%Y%m%d_%H%M%S")
 
 # 删除滚动更新残留的容器
-docker stop `docker ps -a | grep -w $CONTAINER"_"$CONTAINER | awk '{print $1}'`
-docker rm `docker ps -a | grep -w $CONTAINER"_"$CONTAINER | awk '{print $1}'`
+#docker stop `docker ps -a | grep -w $CONTAINER | awk '{print $1}'`
+#docker rm `docker ps -a | grep -w $CONTAINER | awk '{print $1}'`
+
+#docker stop `docker ps -a | grep -w $CONTAINER"_"$CONTAINER | awk '{print $1}'`
+#docker rm `docker ps -a | grep -w $CONTAINER"_"$CONTAINER | awk '{print $1}'`
 # 强制删除滚动更新残留的镜像
 docker rmi --force `docker images | grep -w $CONTAINER | awk '{print $3}'`
 
@@ -44,7 +47,10 @@ cp docker-compose.src.yml docker-compose.cap.yml && \
 sed -i s%IMAGE_LATEST%$IMAGE%g docker-compose.cap.yml && \
 
 # 使用 docker stack 启动服务
-docker stack deploy -c docker-compose.cap.yml $CONTAINER
+#docker stack deploy -c docker-compose.cap.yml $CONTAINER
+
+#启动cap服务
+docker run -itd -p 8090:8090 --link oracle11g:11g --name cap $IMAGE
 
 #删除可能启动的hello容器
 #if docker ps -a | grep -i hello;then
